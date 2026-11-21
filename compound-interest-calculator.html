@@ -123,6 +123,14 @@ temp:{title:"Temperature Converter",cat:"Converters",desc:"Celsius, Fahrenheit a
  calc:x=>{const v=num(x.v),c=x.f==="Celsius"?v:x.f==="Fahrenheit"?(v-32)*5/9:v-273.15;return{big:fmt(c*9/5+32,1)+"°F",label:"Fahrenheit",rows:[["Celsius",fmt(c,1)+"°C"],["Kelvin",fmt(c+273.15,1)+" K"]]}}}
 };
 
+const dur=s=>{if(!isFinite(s)||s<=0)return"\u2013";const t=Math.round(s/60),h=Math.floor(t/60),m=t%60;return h?h+" h "+m+" min":m+" min"};
+C.gtadl={title:"GTA 6 Download Time Calculator",fields:[{id:"s",l:"Game size (GB)",d:212},{id:"v",l:"Internet speed (Mbps)",d:100}],
+calc:x=>{const g=num(x.s),v=num(x.v),t=g*8000/v;return{big:dur(t/.8),label:"Estimated download time at about 80% of your rated speed",rows:[["At your full rated speed",dur(t)],["Speed in megabytes per second",fmt(v/8,1)+" MB/s"],["Data to download",fmt(g,0)+" GB"]]}}};
+C.gtastore={title:"GTA 6 Storage Space Calculator",fields:[{id:"f",l:"Free space now (GB)",d:150},{id:"g",l:"Game size (GB)",d:212}],
+calc:x=>{const f=num(x.f),g=num(x.g),r=f-g;return{big:r>=0?fmt(r,0)+" GB left":"Clear "+fmt(-r,0)+" GB",label:r>=0?"Space remaining after installing":"More space needed before you can install",rows:[["Free space now",fmt(f,0)+" GB"],["Game size",fmt(g,0)+" GB"],["Fits on your console",r>=0?"Yes":"Not yet"]]}}};
+C.gamecost={title:"Game Cost Per Hour Calculator",fields:[{id:"p",l:"Price paid (\u00a3)",d:69.99},{id:"h",l:"Hours played",d:50}],
+calc:x=>{const p=num(x.p),h=num(x.h);return{big:h>0?gbp(p/h):"\u2013",label:"Cost per hour played",rows:[["After 100 hours",gbp(p/100)],["After 200 hours",gbp(p/200)]]}}};
+
 function mount(){const k=document.body.dataset.calc;if(!k||!C[k])return;const c=C[k];
 const f=c.fields.map(x=>x.t==="s"?`<div><label for="${x.id}">${x.l}</label><select id="${x.id}">${x.o.map(o=>`<option${o===x.d?" selected":""}>${o}</option>`).join("")}</select></div>`:`<div><label for="${x.id}">${x.l}</label><input id="${x.id}" ${x.type==="date"?'type="date"':'type="number" inputmode="decimal" step="any"'} value="${x.d}"></div>`).join("");
 $("#calc").innerHTML=`<div class="fields">${f}</div><div class="res" aria-live="polite"><div class="big" id="big"></div><div class="bl" id="bl"></div><div class="rows" id="rows"></div></div>`;
